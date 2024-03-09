@@ -25,17 +25,31 @@ app.get("/api/users/:id", (req, res) => {
 
 app.post("/api/users", (req, res) => {
   const body = req.body;
-  userslist.push({...body, id: userslist.length +1});
+  userslist.push({ ...body, id: userslist.length + 1 });
   fs.writeFile("./MOCK_DATA.json", JSON.stringify(userslist), (err, data) => {
-    return res.json({ status: "success", id: userslist.length +1});
+    return res.json({ status: "success", id: userslist.length });
   });
 });
 
 app.patch("/api/users/:id", (req, res) => {
   // TODO: Edit an user
   const id = Number(req.params.id);
-  const user = userslist.find((user) => user.id === id);
-  return res.json({ status: "pending" });
+  const updatedUserData = req.body;
+  const userIndex = userslist.findIndex((user) => user.id === id);
+
+  if (userIndex === -1) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  userslist[userIndex] = { ...userslist[userIndex], ...updatedUserData };
+  fs.writeFile(
+    "./MOCK_DATA.json",
+    JSON.stringify(userslist, null, 2),
+    (err, data) => {
+      return res.json({ status: "success", id: userIndex + 1 });
+    }
+  );
+
 });
 
 app.delete("/api/users/:id", (req, res) => {
