@@ -32,7 +32,6 @@ app.post("/api/users", (req, res) => {
 });
 
 app.patch("/api/users/:id", (req, res) => {
-  // TODO: Edit an user
   const id = Number(req.params.id);
   const updatedUserData = req.body;
   const userIndex = userslist.findIndex((user) => user.id === id);
@@ -49,14 +48,18 @@ app.patch("/api/users/:id", (req, res) => {
       return res.json({ status: "success", id: userIndex + 1 });
     }
   );
-
 });
 
 app.delete("/api/users/:id", (req, res) => {
-  // TODO: Delete an user
   const id = Number(req.params.id);
-  const user = userslist.find((user) => user.id === id);
-  return res.json({ status: "pending" });
+  const userIndex = userslist.findIndex((user) => user.id === id);
+  if (userIndex === -1) {
+    return res.status(404).json({ error: "User not found" });
+  }
+  userslist.splice(userIndex, 1);
+  fs.writeFile("./MOCK_DATA.json", JSON.stringify(userslist), (err, data) => {
+    return res.json({ status: "Success", id: userIndex + 1 });
+  });
 });
 
 app.listen(8000, () => "Server started");
