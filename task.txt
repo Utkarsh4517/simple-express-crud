@@ -1,0 +1,9 @@
+GET /users = List all users
+
+GET /users/id = get the user with id
+
+POST /users = create new user
+
+PATCH /users/id = edit the user with id 
+
+DELETE /users/id
